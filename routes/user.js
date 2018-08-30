@@ -51,7 +51,7 @@ router.post('/avatar', async (ctx, next) => {
     try {
         if (employee_avatar) {
             const splitArr = employee_avatar.split('/')
-            const preName = splitArr[splitArr.length]
+            const preName = splitArr[splitArr.length - 1]
             const prePath = `./public/images/${preName}`
             await custom.rmFile(prePath)
         }
