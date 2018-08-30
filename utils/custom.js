@@ -18,7 +18,17 @@ const writeFile = (path, data) => {
     })
 }
 
+const rmFile = path => {
+    return new Promise((resolve, reject) => {
+        fs.unlink(path, err => {
+            if (err) reject(err);
+            resolve()
+        })
+    })
+}
+
 module.exports = {
     readFile,
-    writeFile
+    writeFile,
+    rmFile
 }

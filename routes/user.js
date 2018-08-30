@@ -44,12 +44,19 @@ router.get('/quicklogin', async (ctx, next) => {
 
 router.post('/avatar', async (ctx, next) => {
     const file = ctx.request.files[0]
-    const path = `./public/images/${ctx.state.user.userid}.png`
+    const time = new Date().getTime()
     const userid = ctx.state.user.userid
+    const path = `./public/images/${userid}_${time}.png`
+    const {employee_avatar} = await UserDB.getUserById(userid)
     try {
+        if (employee_avatar) {
+            const splitArr = employee_avatar.split('/')
+            const prePath = splitArr[splitArr.length]
+            await custom.rmFile(prePath)
+        }
         const data = await custom.readFile(file.path)
         await custom.writeFile(path, data)
-        const url = `http://${auth.host}:3010/images/${userid}.png`
+        const url = `http://${auth.host}:3010/images/${userid}_${time}.png`
         await UserDB.updateAvatar(userid, url)
         ctx.json = {url}
     } catch (err) {
