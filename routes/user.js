@@ -3,6 +3,7 @@ const router = new Router()
 const UserDB = require('../db/user')
 const TokenManager = require('../utils/token')
 const custom = require('../utils/custom')
+const auth = require('../db/auth')
 
 router.post('/login', async (ctx, next) => {
 	let user = ctx.request.body.user
@@ -44,12 +45,13 @@ router.get('/quicklogin', async (ctx, next) => {
 router.post('/avatar', async (ctx, next) => {
     const file = ctx.request.files[0]
     const path = `./public/images/${ctx.state.user.userid}.png`
+    const userid = ctx.state.user.userid
     try {
         const data = await custom.readFile(file.path)
         await custom.writeFile(path, data)
-        ctx.json = {
-            path: `/images/${ctx.state.user.userid}.png`
-        }
+        const url = `http://${auth.host}/images/${userid}.png`
+        await UserDB.updateAvatar(userid, url)
+        ctx.json = {url}
     } catch (err) {
         ctx.error = {code: 400520, msg: '读写错误！'}
         throw err
