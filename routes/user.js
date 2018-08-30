@@ -49,11 +49,11 @@ router.post('/avatar', async (ctx, next) => {
     try {
         const data = await custom.readFile(file.path)
         await custom.writeFile(path, data)
-        const url = `http://${auth.host}/images/${userid}.png`
+        const url = `http://${auth.host}:3010/images/${userid}.png`
         await UserDB.updateAvatar(userid, url)
         ctx.json = {url}
     } catch (err) {
-        ctx.error = {code: 400520, msg: '读写错误！'}
+        ctx.error = err
         throw err
     }
 })
